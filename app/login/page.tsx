@@ -174,9 +174,9 @@ function LoginContent() {
 
           {/* 우측: 로그인 카드 */}
           <div className="lg:col-span-7 flex flex-col gap-4">
-            <Card className="rounded-3xl border border-border bg-white shadow-xl shadow-stone-200/50 overflow-hidden">
-              <CardHeader className="p-6 sm:p-8 pb-4">
-                <div className="flex items-center justify-between mb-2">
+            <Card className="rounded-3xl border border-border bg-white shadow-xl shadow-stone-200/50 overflow-hidden gap-0 py-0">
+              <CardHeader className="p-6 sm:p-8 pb-3">
+                <div className="flex items-center justify-between mb-1.5">
                   <Badge variant="secondary" className="bg-coral/10 text-coral text-xs font-bold px-2.5 py-1 rounded-full border-0">
                     회원 로그인
                   </Badge>
@@ -190,9 +190,11 @@ function LoginContent() {
                 <CardDescription className="text-xs sm:text-sm text-muted-foreground mt-1">
                   계정 정보를 입력하거나 1-클릭 체험 계정으로 바로 시작하세요.
                 </CardDescription>
+              </CardHeader>
 
+              <CardContent className="p-6 sm:p-8 pt-0 space-y-3">
                 {/* 탭 전환 */}
-                <div className="grid grid-cols-2 p-1 mt-4 rounded-2xl bg-secondary/60 border border-border">
+                <div className="grid grid-cols-2 p-1 rounded-2xl bg-secondary/60 border border-border">
                   <button
                     type="button"
                     onClick={() => setActiveTab('email')}
@@ -216,9 +218,6 @@ function LoginContent() {
                     간편 소셜 / 마이데이터
                   </button>
                 </div>
-              </CardHeader>
-
-              <CardContent className="p-6 sm:p-8 pt-2 space-y-6">
                 {activeTab === 'email' ? (
                   <form onSubmit={handleEmailSubmit} className="space-y-4">
                     <div className="space-y-1.5">
@@ -311,7 +310,7 @@ function LoginContent() {
                   </form>
                 ) : (
                   /* 간편 소셜 / 마이데이터 탭 */
-                  <div className="space-y-3">
+                  <div className="space-y-2.5">
                     <button
                       type="button"
                       onClick={() => handleSocialLogin('kakao')}

@@ -10,7 +10,9 @@ import {
   CreditCard,
   FileCode2,
   FileSearch,
+  FileText,
   Layers,
+  RefreshCw,
   Shield,
   ShieldAlert,
   ShieldCheck,
@@ -26,9 +28,10 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
-import { DEFAULT_USER_POLICIES } from '@/lib/data/user-policies'
+import { useUserPolicies } from '@/lib/hooks/use-user-policies'
 import type { InsurancePolicyDocument, UserEnrolledPolicy } from '@/types/policy'
 import { PolicyJsonModal } from './policy-json-modal'
+import { PolicyChangeSyncDialog } from './policy-change-sync-dialog'
 import { cn } from '@/lib/utils'
 import { useAuth } from '@/lib/auth-context'
 
@@ -45,14 +48,27 @@ export function MyPoliciesDialog({
 }: MyPoliciesDialogProps) {
   const { user } = useAuth()
   const userName = user?.name || '홍길동'
+  const {
+    policies,
+    lastSyncTime,
+    isSyncing,
+    updatePolicies,
+    resetToDefault,
+    syncWithMyData,
+  } = useUserPolicies()
+
   const [selectedJsonDoc, setSelectedJsonDoc] =
     React.useState<InsurancePolicyDocument | null>(null)
   const [isJsonModalOpen, setIsJsonModalOpen] = React.useState(false)
-  const [expandedContractIds, setExpandedContractIds] = React.useState<string[]>([
-    DEFAULT_USER_POLICIES[0].contract_id,
-  ])
+  const [isSyncModalOpen, setIsSyncModalOpen] = React.useState(false)
+  const [expandedContractIds, setExpandedContractIds] = React.useState<string[]>([])
 
-  const policies = DEFAULT_USER_POLICIES
+  // 초기 로드 시 첫 번째 보험 펼치기
+  React.useEffect(() => {
+    if (policies.length > 0 && expandedContractIds.length === 0) {
+      setExpandedContractIds([policies[0].contract_id])
+    }
+  }, [policies, expandedContractIds.length])
 
   // 통계 계산
   const totalMonthlyPremium = React.useMemo(() => {
@@ -223,8 +239,8 @@ export function MyPoliciesDialog({
                               }}
                               className="rounded-full text-xs font-bold h-8 px-3 text-coral border-coral/30 hover:bg-coral/10 hover:text-coral"
                             >
-                              <FileCode2 className="mr-1 size-3.5" />
-                              약관 JSON
+                              <FileText className="mr-1 size-3.5" />
+                              약관 근거
                             </Button>
                             <Button
                               type="button"
@@ -309,6 +325,15 @@ export function MyPoliciesDialog({
               >
                 닫기
               </Button>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setIsSyncModalOpen(true)}
+                className="rounded-xl text-xs font-bold h-10 px-4 border-coral/50 text-coral bg-coral/5 hover:bg-coral/15 hover:border-coral flex-1 sm:flex-none gap-1.5 transition-all shadow-xs"
+              >
+                <RefreshCw className={cn('size-3.5', isSyncing && 'animate-spin')} />
+                <span>보험이 변동되었나요?</span>
+              </Button>
               {onStartSimulation && (
                 <Button
                   type="button"
@@ -332,6 +357,18 @@ export function MyPoliciesDialog({
           policy={selectedJsonDoc}
         />
       )}
+
+      {/* 마이데이터 보험 변동 동기화 및 관리 모달 */}
+      <PolicyChangeSyncDialog
+        open={isSyncModalOpen}
+        onOpenChange={setIsSyncModalOpen}
+        currentPolicies={policies}
+        onSavePolicies={updatePolicies}
+        onResetToDefault={resetToDefault}
+        onSyncMyData={syncWithMyData}
+        isSyncing={isSyncing}
+        lastSyncTime={lastSyncTime}
+      />
     </>
   )
 }

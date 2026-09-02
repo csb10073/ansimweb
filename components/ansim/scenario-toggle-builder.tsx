@@ -12,6 +12,7 @@ import {
   Coins,
   FileText,
   Scale,
+  Archive,
   ChevronRight,
   RotateCcw,
   Plus,
@@ -742,34 +743,34 @@ export function ScenarioToggleBuilder({
         </div>
       </div>
 
-      {/* 진단 후 사용자용 [청구 조건 A vs B 비교] 추천 배너 */}
+      {/* 시뮬레이션 결과 보관함 배너 */}
       {onOpenCompare && (
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-2xl bg-gradient-to-r from-coral/10 via-navy/5 to-secondary border border-coral/30 shadow-xs animate-in fade-in duration-300">
           <div className="flex items-center gap-3">
             <div className="flex size-9 items-center justify-center rounded-xl bg-coral text-white shrink-0 shadow-sm">
-              <Scale className="size-4" />
+              <Archive className="size-4" />
             </div>
             <div>
               <div className="flex items-center gap-1.5">
                 <span className="text-xs font-black text-foreground">
-                  ⚖️ 청구 조건에 따른 예상 보장액 A vs B 비교 (8대 프리셋)
+                  📁 시뮬레이션 결과 보관함
                 </span>
                 <Badge variant="secondary" className="text-[10px] bg-coral/15 text-coral border-coral/30 font-bold">
-                  강력 추천
+                  저장 내역
                 </Badge>
               </div>
               <p className="text-[11px] text-muted-foreground mt-0.5">
-                <strong>도수치료 단독 vs MRI 동시 청구</strong>, <strong>90일 면책기간 전후</strong>, <strong>수술·입원 방식별</strong> 차이를 한눈에 대조해보세요.
+                이전에 시뮬레이션하여 저장해둔 치료·사고 결과를 언제든지 다시 확인하고 워크스페이스로 불러올 수 있습니다.
               </p>
             </div>
           </div>
           <Button
             type="button"
             size="sm"
-            onClick={() => onOpenCompare('compare_manual_vs_mri')}
+            onClick={() => onOpenCompare()}
             className="rounded-xl bg-coral hover:bg-coral/90 text-white font-bold text-xs shrink-0 h-9 px-4 shadow-sm"
           >
-            <span>조건별 A vs B 비교창 열기</span>
+            <span>시뮬레이션 보관함 열기</span>
             <ChevronRight className="ml-1 size-3.5" />
           </Button>
         </div>

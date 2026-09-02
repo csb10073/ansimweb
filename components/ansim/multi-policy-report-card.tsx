@@ -22,6 +22,7 @@ import {
   Sparkles,
   XCircle,
   Scale,
+  Archive,
 } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -32,6 +33,7 @@ import type {
   MultiPolicySimulationReport,
   SinglePolicySimulationResult,
 } from '@/types/policy'
+import { PolicyEvidenceViewer } from './policy-evidence-viewer'
 import { cn } from '@/lib/utils'
 import { toast } from 'sonner'
 
@@ -40,7 +42,8 @@ interface MultiPolicyReportCardProps {
   onReset: () => void
   onViewJson: (policyDoc: InsurancePolicyDocument) => void
   allPolicyDocs: InsurancePolicyDocument[]
-  onOpenCompare?: (pairId?: string) => void
+  onOpenCompare?: () => void
+  onSaveSimulation?: () => void
 }
 
 export function MultiPolicyReportCard({
@@ -49,15 +52,11 @@ export function MultiPolicyReportCard({
   onViewJson,
   allPolicyDocs,
   onOpenCompare,
+  onSaveSimulation,
 }: MultiPolicyReportCardProps) {
   const [openPolicyTab, setOpenPolicyTab] = React.useState<string | null>(
     report.policy_results[0]?.contract_id ?? null,
   )
-  const [expandedEvidences, setExpandedEvidences] = React.useState<Record<string, boolean>>({})
-
-  const toggleEvidence = (id: string) => {
-    setExpandedEvidences((prev) => ({ ...prev, [id]: !prev[id] }))
-  }
 
   const handleCopyReport = async () => {
     const lines = [
@@ -136,16 +135,16 @@ export function MultiPolicyReportCard({
             </span>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             {onOpenCompare && (
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => onOpenCompare('compare_manual_vs_mri')}
-                className="h-8 rounded-full border-coral/40 bg-coral/20 text-xs text-white hover:bg-coral/30 hover:text-white font-bold"
+                onClick={onOpenCompare}
+                className="h-8 rounded-full border-white/20 bg-white/10 text-xs text-white hover:bg-white/20 hover:text-white font-bold"
               >
-                <Scale className="mr-1.5 size-3.5 text-coral" />
-                청구 조건 A vs B 비교
+                <Archive className="mr-1.5 size-3.5 text-coral" />
+                시뮬레이션 결과 보관함
               </Button>
             )}
             <Button
@@ -307,8 +306,8 @@ export function MultiPolicyReportCard({
                       }}
                       className="h-7 text-xs rounded-full px-2.5 hidden sm:flex"
                     >
-                      <FileCode2 className="mr-1 size-3.5 text-coral" />
-                      약관 JSON
+                      <FileText className="mr-1 size-3.5 text-coral" />
+                      약관 근거
                     </Button>
                   )}
 
@@ -330,8 +329,6 @@ export function MultiPolicyReportCard({
                       </span>
 
                       {policyRes.relevant_judgments.map((item, jIdx) => {
-                        const isEvidenceOpen = Boolean(expandedEvidences[item.coverage_id])
-
                         return (
                           <div
                             key={item.coverage_id}
@@ -364,34 +361,12 @@ export function MultiPolicyReportCard({
                               ⚖️ <strong>판단 사유:</strong> {item.decision_reason}
                             </p>
 
-                            {/* Evidence 확인 토글 */}
+                            {/* Evidence 확인 컴포넌트 */}
                             {item.evidences.length > 0 && (
-                              <div className="pt-1">
-                                <button
-                                  type="button"
-                                  onClick={() => toggleEvidence(item.coverage_id)}
-                                  className="flex items-center gap-1 text-[11px] font-bold text-coral hover:underline"
-                                >
-                                  <FileText className="size-3.5" />
-                                  약관 근거 조항 {item.evidences.length}건 {isEvidenceOpen ? '접기' : '보기'}
-                                </button>
-
-                                {isEvidenceOpen && (
-                                  <div className="mt-2 flex flex-col gap-2">
-                                    {item.evidences.map((ev, evIdx) => (
-                                      <div
-                                        key={evIdx}
-                                        className="rounded-xl border border-border/60 bg-background p-2.5 text-[11px]"
-                                      >
-                                        <div className="font-bold text-navy mb-0.5">{ev.title}</div>
-                                        <div className="font-mono text-muted-foreground leading-relaxed">
-                                          {ev.content}
-                                        </div>
-                                      </div>
-                                    ))}
-                                  </div>
-                                )}
-                              </div>
+                              <PolicyEvidenceViewer
+                                evidences={item.evidences}
+                                coverageName={item.coverage_name}
+                              />
                             )}
                           </div>
                         )
@@ -419,18 +394,35 @@ export function MultiPolicyReportCard({
         {onOpenCompare ? (
           <Button
             variant="outline"
-            onClick={() => onOpenCompare('compare_manual_vs_mri')}
-            className="rounded-full text-xs border-coral/40 text-coral hover:bg-coral/10 font-bold"
+            onClick={onOpenCompare}
+            className="rounded-full text-xs border-coral/40 text-coral hover:bg-coral/10 font-bold h-11 px-5 shadow-xs"
           >
-            <Scale className="mr-1.5 size-3.5" />
-            청구 조건별 A vs B 비교 모달 열기
+            <Archive className="mr-1.5 size-3.5" />
+            시뮬레이션 결과 보관함
           </Button>
         ) : (
           <div />
         )}
-        <Button variant="outline" onClick={onReset} className="rounded-full">
-          조건 수정하여 다시 시뮬레이션하기
-        </Button>
+
+        <div className="flex items-center gap-2.5">
+          {onSaveSimulation && (
+            <Button
+              variant="outline"
+              onClick={onSaveSimulation}
+              className="rounded-full text-xs border-coral/40 text-coral bg-coral/5 hover:bg-coral/15 font-bold h-11 px-5 shadow-xs"
+            >
+              <Sparkles className="mr-1.5 size-3.5 text-coral" />
+              현재 결과 보관함에 저장
+            </Button>
+          )}
+          <Button
+            variant="default"
+            onClick={onReset}
+            className="rounded-full bg-navy hover:bg-navy/90 text-white font-bold text-xs h-11 px-6 shadow-md shadow-navy/20"
+          >
+            조건 수정하여 다시 시뮬레이션하기
+          </Button>
+        </div>
       </div>
     </div>
   )

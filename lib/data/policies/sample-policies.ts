@@ -333,4 +333,240 @@ export const SAMPLE_POLICIES: InsurancePolicyDocument[] = [
       },
     ],
   },
+  {
+    id: 'policy_driver_protection',
+    product_name: '안심 프리미엄 운전자 비용보장보험',
+    product_code: 'ANSIM-DRV-2026-05',
+    category: '운전자보험',
+    insurer_name: 'ANSIM 화재해상',
+    version: '2026.01 최신판',
+    summary: '교통사고처리지원금(형사합의금), 변호사선임비용, 자동차사고벌금, 자동차사고부상치료비(자부상) 종합 보장',
+    coverages: [
+      {
+        id: 'cov_traffic_accident_settlement',
+        name: '교통사고 처리지원금 (형사합의금)',
+        category: '운전자비용',
+        insured_amount: 200_000_000,
+        conditions: [
+          {
+            summary: '운전 중 교통사고로 피해자 사망, 중상해(1~3급), 또는 12대 중과실 사고로 42일 이상 치료 진단을 받은 경우 형사합의금 실손 보장',
+            required_keywords: ['교통사고', '형사합의', '처리지원금', '중상해', '12대중과실', '사망', '피해자합의'],
+            evidence: '운전자약관 제4조(교통사고처리지원금): 피보험자가 자가용 운전 중 발생한 사고로 형사합의 시 실제 합의금을 2억원 한도로 지급합니다.',
+          },
+        ],
+        exclusions: [
+          {
+            summary: '음주운전, 무면허운전, 약물복용 운전, 사고 후 도주(뺑소니)',
+            evidence: '운전자약관 제6조(면책사항): 음주, 무면허, 뺑소니 사고는 어떠한 경우에도 보상하지 않습니다.',
+          },
+        ],
+        limits: [
+          {
+            per_claim_limit: 200_000_000,
+            description: '사고 1건당 최대 2억원 실손 보상 (선지급 가능)',
+            evidence: '운전자약관 제5조: 1사고당 최고 2억원을 한도로 실손 보상합니다.',
+          },
+        ],
+        payment: {
+          type: 'fixed',
+          base_amount: 200_000_000,
+          formula_description: '실제 형사 합의금 전액 지급 (최대 200,000,000원 한도)',
+          evidence: '운전자약관 제7조: 경찰/검찰 제출 합의서 기준 실 지급액 보상.',
+        },
+      },
+      {
+        id: 'cov_driver_injury_treatment',
+        name: '자동차사고 부상치료비 (자부상 14급 이상)',
+        category: '상해치료',
+        insured_amount: 500_000,
+        conditions: [
+          {
+            summary: '자가용 운전 중 또는 탑승 중 자동차사고로 자동차손해배상보장법 시행령 [별표1] 상해등급 1~14급에 해당하는 상해를 입은 경우',
+            required_keywords: ['부상치료비', '자부상', '염좌', '타박상', '교통사고부상', '14급', '교통사고', '접촉사고'],
+            evidence: '운전자약관 제12조(부상치료비): 자동차 사고로 상해등급 14급(단순 염좌, 뇌진탕 등) 이상 판정 시 가입금액을 지급합니다.',
+          },
+        ],
+        exclusions: [
+          {
+            summary: '고의 사고, 경기용 차량 운전 중 사고',
+            evidence: '운전자약관 제14조: 피보험자의 고의 및 모터스포츠 경기 중 사고는 면책됩니다.',
+          },
+        ],
+        limits: [
+          {
+            per_claim_limit: 500_000,
+            description: '14급 기준 50만원 정액 지급 (상위 급수 시 최대 3,000만원 차등 지급)',
+            evidence: '운전자약관 제13조: 14급 50만원 정액 지급.',
+          },
+        ],
+        payment: {
+          type: 'fixed',
+          base_amount: 500_000,
+          formula_description: '상해등급 14급 기준 정액 500,000원 지급',
+          evidence: '운전자약관 제15조: 진단서 및 지급결의서 확인 후 정액 지급.',
+        },
+      },
+    ],
+  },
+  {
+    id: 'policy_brain_cardio_intensive',
+    product_name: '안심 뇌·심장 집중케어보험 (특약강화형)',
+    product_code: 'ANSIM-CRD-2026-08',
+    category: '건강보험',
+    insurer_name: 'ANSIM 손해보험',
+    version: '2026.04 개정판',
+    summary: '급성심근경색증 진단비, 허혈성심장질환 수술비, 혈전용해치료비 등 2대 중증질환 집중 보장',
+    coverages: [
+      {
+        id: 'cov_myocardial_infarction',
+        name: '급성심근경색증 진단비',
+        category: '진단비',
+        insured_amount: 30_000_000,
+        conditions: [
+          {
+            summary: '급성심근경색증(I21~I23)으로 전형적인 흉통, 심전도(ECG) 변화, 심근효소 상승 기준에 의해 확진된 경우',
+            required_keywords: ['심근경색', '급성심근경색', 'I21', '심장마비', '관상동맥폐색'],
+            evidence: '약관 제10조(급성심근경색증의 정의): 의사의 진단서 및 심전도/심근효소 검사 결과에 의해 진단확정되어야 합니다.',
+          },
+        ],
+        exclusions: [
+          {
+            summary: '진단 확정 없는 단순 흉통 의증',
+            evidence: '약관 제12조: 확정진단이 아닌 임상적 추정 단계에서는 지급하지 않습니다.',
+          },
+        ],
+        limits: [
+          {
+            per_claim_limit: 30_000_000,
+            description: '최초 1회 한',
+            evidence: '약관 제11조: 최초 1회 진단 시 전액 지급 후 특약 소멸.',
+          },
+        ],
+        payment: {
+          type: 'fixed',
+          base_amount: 30_000_000,
+          formula_description: '가입금액 30,000,000원 전액 일시 지급',
+          evidence: '약관 제13조: 가입금액 3,000만원 지급.',
+        },
+      },
+      {
+        id: 'cov_ischemic_heart_surgery',
+        name: '허혈성심장질환 수술비 (스텐트 삽입술 포함)',
+        category: '수술비',
+        insured_amount: 10_000_000,
+        conditions: [
+          {
+            summary: '협심증(I20), 급성심근경색(I21) 등 허혈성심장질환 치료를 위해 관상동맥 스텐트 삽입술, 관상동맥우회술 등의 수술을 받은 경우',
+            required_keywords: ['스텐트', '스텐트삽입', '관상동맥', '허혈성심장', '심장수술', '풍선확장술', '협심증'],
+            evidence: '약관 제20조: 허혈성심장질환 치료를 직접 목적으로 관상동맥성형술(스텐트 등)을 시행한 경우 수술비를 지급합니다.',
+          },
+        ],
+        exclusions: [
+          {
+            summary: '검사 목적의 단순 혈관조영술',
+            evidence: '약관 제22조: 치료 수술이 아닌 진단 목적의 단순 조영술은 수술비 지급 대상에서 제외됩니다.',
+          },
+        ],
+        limits: [
+          {
+            per_claim_limit: 10_000_000,
+            description: '수술 1회당 지급 (연간 반복 보장)',
+            evidence: '약관 제21조: 수술 1회당 1,000만원 지급.',
+          },
+        ],
+        payment: {
+          type: 'per_event',
+          base_amount: 10_000_000,
+          formula_description: '수술 1회당 10,000,000원 × 수술 횟수',
+          evidence: '약관 제23조: 수술 회당 정액 1,000만원 지급.',
+        },
+      },
+    ],
+  },
+  {
+    id: 'policy_dental_care',
+    product_name: '안심 든든 치아케어보험',
+    product_code: 'ANSIM-DENT-2026-02',
+    category: '치아보험',
+    insurer_name: 'ANSIM 생명보험',
+    version: '2026.02 개정판',
+    summary: '임플란트, 브릿지, 크라운, 충치치료(레진/인레이) 등 치과 진료비 집중 보장',
+    coverages: [
+      {
+        id: 'cov_dental_implant',
+        name: '영구치 임플란트 치료비',
+        category: '치아보철',
+        insured_amount: 2_000_000,
+        conditions: [
+          {
+            summary: '치아우식증(충치) 또는 치주질환으로 인하여 영구치를 발치하고 해당 부위에 인공치근(임플란트)을 식립한 경우',
+            required_keywords: ['임플란트', '치아발치', '영구치', '치조골', '인공치근', '치과치료'],
+            evidence: '치아약관 제5조(임플란트 보장): 영구치 발치 후 임플란트 식립 치료 완료 시 1개당 가입금액을 지급합니다.',
+          },
+        ],
+        exclusions: [
+          {
+            summary: '미용목적의 교정치료, 과거 발치했던 부위에 임플란트 식립',
+            evidence: '치아약관 제7조: 가입 전 이미 발치된 영구치에 대한 치료는 보상하지 않습니다.',
+          },
+        ],
+        time_rules: [
+          {
+            type: 'reduction_period',
+            period_days: 365,
+            description: '계약일로부터 1년 미만 치료 시 50% 감액 지급 (90일 면책)',
+            payout_ratio: 0.5,
+            evidence: '치아약관 제6조: 계약일 1년 미만 시 50% 지급.',
+          },
+        ],
+        limits: [
+          {
+            per_claim_limit: 2_000_000,
+            annual_limit: 6_000_000, // 연간 3개 한도
+            description: '영구치 1개당 200만원 (연간 최대 3개 한도)',
+            evidence: '치아약관 제8조: 치아 1개당 200만원 지급.',
+          },
+        ],
+        payment: {
+          type: 'per_event',
+          base_amount: 2_000_000,
+          formula_description: '임플란트 영구치 1개당 2,000,000원 × 감액율',
+          evidence: '치아약관 제9조: 개당 200만원 지급.',
+        },
+      },
+      {
+        id: 'cov_dental_crown',
+        name: '치아 크라운 치료비 (금관치료)',
+        category: '치아보존',
+        insured_amount: 500_000,
+        conditions: [
+          {
+            summary: '충치 또는 잇몸질환으로 영구치에 신경치료 후 크라운(골드/지르코니아/도재 등) 보철을 씌운 경우',
+            required_keywords: ['크라운', '골드크라운', '지르코니아', '치아보철', '신경치료', '치관수복'],
+            evidence: '치아약관 제12조(크라운 보장): 영구치 치관 형성 후 영구 보철물을 씌운 경우 지급합니다.',
+          },
+        ],
+        exclusions: [
+          {
+            summary: '라미네이트 등 심미적 목적의 시술',
+            evidence: '치아약관 제14조: 미용 목적 치아성형은 제외됩니다.',
+          },
+        ],
+        limits: [
+          {
+            per_claim_limit: 500_000,
+            description: '치아 1개당 50만원 (연간 무제한)',
+            evidence: '치아약관 제13조: 영구치 1개당 50만원 정액 지급.',
+          },
+        ],
+        payment: {
+          type: 'per_event',
+          base_amount: 500_000,
+          formula_description: '크라운 치료 1개당 500,000원',
+          evidence: '치아약관 제15조: 치아당 50만원.',
+        },
+      },
+    ],
+  },
 ]
+

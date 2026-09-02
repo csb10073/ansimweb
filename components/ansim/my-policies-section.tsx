@@ -7,6 +7,7 @@ import {
   ChevronRight,
   ExternalLink,
   FileCode2,
+  FileText,
   Plus,
   RefreshCw,
   Shield,
@@ -26,6 +27,7 @@ interface MyPoliciesSectionProps {
   onTogglePolicy: (contractId: string) => void
   onSelectAll: () => void
   onViewJson: (policyDoc: InsurancePolicyDocument) => void
+  onOpenSyncModal?: () => void
 }
 
 export function MyPoliciesSection({
@@ -34,6 +36,7 @@ export function MyPoliciesSection({
   onTogglePolicy,
   onSelectAll,
   onViewJson,
+  onOpenSyncModal,
 }: MyPoliciesSectionProps) {
   const { user } = useAuth()
   const userName = user?.name || '홍길동'
@@ -68,6 +71,17 @@ export function MyPoliciesSection({
           </div>
 
           <div className="flex items-center gap-2">
+            {onOpenSyncModal && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={onOpenSyncModal}
+                className="rounded-full text-xs h-8 border-coral/40 text-coral bg-coral/5 hover:bg-coral/15 hover:border-coral gap-1 font-bold"
+              >
+                <RefreshCw className="size-3" />
+                <span>보험이 변동되었나요?</span>
+              </Button>
+            )}
             <Button
               variant="outline"
               size="sm"
@@ -184,8 +198,8 @@ export function MyPoliciesSection({
                     }}
                     className="inline-flex items-center gap-1 text-[11px] font-bold text-coral hover:underline"
                   >
-                    <FileCode2 className="size-3.5" />
-                    약관 JSON
+                    <FileText className="size-3.5" />
+                    약관 근거
                   </button>
                 </div>
               </CardContent>

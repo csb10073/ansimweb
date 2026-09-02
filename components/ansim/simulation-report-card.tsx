@@ -22,6 +22,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import type { CoverageItemJudgment, PolicySimulationReport } from '@/types/policy'
+import { PolicyEvidenceViewer } from './policy-evidence-viewer'
 import { cn } from '@/lib/utils'
 import { toast } from 'sonner'
 
@@ -33,11 +34,6 @@ interface SimulationReportCardProps {
 
 export function SimulationReportCard({ report, onReset, onViewJson }: SimulationReportCardProps) {
   const [showUnrelated, setShowUnrelated] = React.useState(false)
-  const [expandedEvidences, setExpandedEvidences] = React.useState<Record<string, boolean>>({})
-
-  const toggleEvidence = (id: string) => {
-    setExpandedEvidences((prev) => ({ ...prev, [id]: !prev[id] }))
-  }
 
   const handleCopyReport = async () => {
     const lines = [
@@ -119,7 +115,7 @@ export function SimulationReportCard({ report, onReset, onViewJson }: Simulation
               className="h-8 rounded-full border-white/20 bg-white/10 text-xs text-white hover:bg-white/20 hover:text-white"
             >
               <FileText className="mr-1.5 size-3.5 text-coral" />
-              적용 약관 JSON 확인
+              적용 약관 근거 확인
             </Button>
             <Button
               variant="outline"
@@ -194,8 +190,6 @@ export function SimulationReportCard({ report, onReset, onViewJson }: Simulation
           </div>
         ) : (
           report.relevant_judgments.map((item: CoverageItemJudgment, idx: number) => {
-            const isEvidenceOpen = Boolean(expandedEvidences[item.coverage_id])
-
             return (
               <Card
                 key={item.coverage_id}
@@ -264,46 +258,12 @@ export function SimulationReportCard({ report, onReset, onViewJson }: Simulation
                     </div>
                   )}
 
-                  {/* 약관 Evidence 원문 보기 토글 */}
+                  {/* 약관 Evidence 원문 보기 컴포넌트 */}
                   {item.evidences.length > 0 && (
-                    <div className="border-t border-border pt-3">
-                      <button
-                        type="button"
-                        onClick={() => toggleEvidence(item.coverage_id)}
-                        className="flex w-full items-center justify-between text-xs font-semibold text-muted-foreground transition-colors hover:text-coral"
-                      >
-                        <span className="flex items-center gap-1.5">
-                          <FileText className="size-3.5 text-coral" />
-                          약관 근거 조항 (Evidence {item.evidences.length}건 확인)
-                        </span>
-                        {isEvidenceOpen ? (
-                          <ChevronUp className="size-4" />
-                        ) : (
-                          <ChevronDown className="size-4" />
-                        )}
-                      </button>
-
-                      {isEvidenceOpen && (
-                        <div className="mt-3 flex flex-col gap-2.5 animate-in fade-in-50 duration-200">
-                          {item.evidences.map((ev: any, eIdx: number) => (
-                            <div
-                              key={eIdx}
-                              className="rounded-xl border border-border/70 bg-background p-3 text-xs"
-                            >
-                              <div className="mb-1 flex items-center justify-between">
-                                <span className="font-bold text-navy">{ev.title}</span>
-                                <Badge variant="outline" className="text-[10px] uppercase">
-                                  {ev.rule_type}
-                                </Badge>
-                              </div>
-                              <p className="font-mono text-[11px] leading-relaxed text-muted-foreground">
-                                {ev.content}
-                              </p>
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                    </div>
+                    <PolicyEvidenceViewer
+                      evidences={item.evidences}
+                      coverageName={item.coverage_name}
+                    />
                   )}
                 </CardContent>
               </Card>

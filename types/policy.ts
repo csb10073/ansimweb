@@ -64,7 +64,7 @@ export interface InsurancePolicyDocument {
   id: string
   product_name: string
   product_code: string
-  category: '건강보험' | '실손의료보험' | '여행자보험' | '운전자보험'
+  category: '건강보험' | '실손의료보험' | '여행자보험' | '운전자보험' | '치아보험' | string
   insurer_name: string
   version: string
   summary: string
