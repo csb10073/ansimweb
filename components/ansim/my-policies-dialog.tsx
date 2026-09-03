@@ -63,12 +63,18 @@ export function MyPoliciesDialog({
   const [isSyncModalOpen, setIsSyncModalOpen] = React.useState(false)
   const [expandedContractIds, setExpandedContractIds] = React.useState<string[]>([])
 
-  // 초기 로드 시 첫 번째 보험 펼치기
+  const initializedRef = React.useRef(false)
+
+  // 모달이 열릴 때 최초 1회 첫 번째 보험 기본 펼치기
   React.useEffect(() => {
-    if (policies.length > 0 && expandedContractIds.length === 0) {
+    if (open && !initializedRef.current && policies.length > 0) {
       setExpandedContractIds([policies[0].contract_id])
+      initializedRef.current = true
     }
-  }, [policies, expandedContractIds.length])
+    if (!open) {
+      initializedRef.current = false
+    }
+  }, [open, policies])
 
   // 통계 계산
   const totalMonthlyPremium = React.useMemo(() => {
@@ -245,9 +251,11 @@ export function MyPoliciesDialog({
                             <Button
                               type="button"
                               variant="ghost"
-                              size="icon"
-                              className="size-8 rounded-full text-muted-foreground"
+                              size="sm"
+                              className="rounded-full text-xs font-semibold text-muted-foreground h-8 px-2.5 flex items-center gap-1 hover:bg-secondary"
+                              aria-label={isExpanded ? '세부내용 닫기' : '세부내용 보기'}
                             >
+                              <span className="text-xs">{isExpanded ? '세부내용 닫기' : '세부내용 보기'}</span>
                               {isExpanded ? <ChevronUp className="size-4" /> : <ChevronDown className="size-4" />}
                             </Button>
                           </div>

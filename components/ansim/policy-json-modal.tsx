@@ -101,7 +101,10 @@ export function PolicyJsonModal({ open, onOpenChange, policy }: PolicyJsonModalP
 
   // 개별 펼치기/접기
   const toggleItem = (id: string) => {
-    setExpandedItems((prev) => ({ ...prev, [id]: !prev[id] }))
+    setExpandedItems((prev) => {
+      const current = prev[id] !== false
+      return { ...prev, [id]: !current }
+    })
   }
 
   // 전체 펼치기 / 전체 접기
@@ -114,7 +117,11 @@ export function PolicyJsonModal({ open, onOpenChange, policy }: PolicyJsonModalP
   }
 
   const handleCollapseAll = () => {
-    setExpandedItems({})
+    const next: Record<string, boolean> = {}
+    filteredCoverages.forEach((c) => {
+      next[c.id] = false
+    })
+    setExpandedItems(next)
   }
 
   const handleCopyClause = async (text: string, id: string, e: React.MouseEvent) => {

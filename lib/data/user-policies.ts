@@ -8,8 +8,8 @@ export const HONG_USER_POLICIES: UserEnrolledPolicy[] = [
   {
     contract_id: 'contract_hong_hlth_001',
     policy_id: 'policy_health_comprehensive',
-    policy_document: SAMPLE_POLICIES[0], // 안심 3대 질병 종합건강보험
-    contract_number: 'ANSIM-2025-HLTH-9941',
+    policy_document: SAMPLE_POLICIES[0], // 삼성화재 다이렉트 건강보험 마이헬스파트너
+    contract_number: 'SFMI-2025-HLTH-9941',
     insured_name: '홍길동',
     contract_date: '2025-08-01',
     monthly_premium: 85_000,
@@ -19,8 +19,8 @@ export const HONG_USER_POLICIES: UserEnrolledPolicy[] = [
   {
     contract_id: 'contract_hong_indem_002',
     policy_id: 'policy_indemnity_4th',
-    policy_document: SAMPLE_POLICIES[1], // 안심 4세대 표준 실손의료보험
-    contract_number: 'ANSIM-2024-INDM-3312',
+    policy_document: SAMPLE_POLICIES[1], // 현대해상 4세대 표준 실손의료보험
+    contract_number: 'HI-2024-INDM-3312',
     insured_name: '홍길동',
     contract_date: '2024-01-10',
     monthly_premium: 24_500,
@@ -30,8 +30,8 @@ export const HONG_USER_POLICIES: UserEnrolledPolicy[] = [
   {
     contract_id: 'contract_hong_trvl_003',
     policy_id: 'policy_traveler_global',
-    policy_document: SAMPLE_POLICIES[2], // 안심 글로벌 해외여행자보험
-    contract_number: 'ANSIM-2026-TRVL-7782',
+    policy_document: SAMPLE_POLICIES[2], // KB 다이렉트 해외여행보험
+    contract_number: 'KB-2026-TRVL-7782',
     insured_name: '홍길동',
     contract_date: '2026-07-01',
     monthly_premium: 18_000,
@@ -47,8 +47,8 @@ export const KIM_USER_POLICIES: UserEnrolledPolicy[] = [
   {
     contract_id: 'contract_kim_indem_001',
     policy_id: 'policy_indemnity_4th',
-    policy_document: SAMPLE_POLICIES[1], // 안심 4세대 표준 실손의료보험
-    contract_number: 'ANSIM-2025-INDM-5521',
+    policy_document: SAMPLE_POLICIES[1], // 현대해상 4세대 표준 실손의료보험
+    contract_number: 'HI-2025-INDM-5521',
     insured_name: '김안심',
     contract_date: '2025-03-15',
     monthly_premium: 27_000,
@@ -58,8 +58,8 @@ export const KIM_USER_POLICIES: UserEnrolledPolicy[] = [
   {
     contract_id: 'contract_kim_hlth_002',
     policy_id: 'policy_health_comprehensive',
-    policy_document: SAMPLE_POLICIES[0], // 안심 3대 질병 종합건강보험
-    contract_number: 'ANSIM-2024-HLTH-1192',
+    policy_document: SAMPLE_POLICIES[0], // 삼성화재 다이렉트 건강보험 마이헬스파트너
+    contract_number: 'SFMI-2024-HLTH-1192',
     insured_name: '김안심',
     contract_date: '2024-06-20',
     monthly_premium: 72_000,
@@ -95,8 +95,8 @@ export const CANDIDATE_EXTRA_POLICIES: UserEnrolledPolicy[] = [
   {
     contract_id: 'contract_drv_004',
     policy_id: 'policy_driver_protection',
-    policy_document: SAMPLE_POLICIES[3], // 안심 프리미엄 운전자 비용보장보험
-    contract_number: 'ANSIM-2026-DRV-1109',
+    policy_document: SAMPLE_POLICIES[3], // DB손해보험 참좋은 운전자상해보험
+    contract_number: 'DB-2026-DRV-1109',
     insured_name: '홍길동',
     contract_date: '2026-02-15',
     monthly_premium: 19_800,
@@ -106,8 +106,8 @@ export const CANDIDATE_EXTRA_POLICIES: UserEnrolledPolicy[] = [
   {
     contract_id: 'contract_crd_005',
     policy_id: 'policy_brain_cardio_intensive',
-    policy_document: SAMPLE_POLICIES[4], // 안심 뇌·심장 집중케어보험
-    contract_number: 'ANSIM-2026-CRD-8821',
+    policy_document: SAMPLE_POLICIES[4], // 메리츠화재 듬직한 뇌·심장 집중보장보험
+    contract_number: 'MERITZ-2026-CRD-8821',
     insured_name: '홍길동',
     contract_date: '2026-03-01',
     monthly_premium: 45_000,
@@ -117,8 +117,8 @@ export const CANDIDATE_EXTRA_POLICIES: UserEnrolledPolicy[] = [
   {
     contract_id: 'contract_dent_006',
     policy_id: 'policy_dental_care',
-    policy_document: SAMPLE_POLICIES[5], // 안심 든든 치아케어보험
-    contract_number: 'ANSIM-2026-DENT-5541',
+    policy_document: SAMPLE_POLICIES[5], // 라이나생명 (무)THE건강한치아보험
+    contract_number: 'LINA-2026-DENT-5541',
     insured_name: '홍길동',
     contract_date: '2026-04-10',
     monthly_premium: 32_000,
@@ -130,11 +130,11 @@ export const CANDIDATE_EXTRA_POLICIES: UserEnrolledPolicy[] = [
 export const USER_POLICIES_CHANGE_EVENT = 'ansim:user-policies-changed'
 
 export function getUserStorageKey(userId?: string | null): string {
-  return `ansim_user_enrolled_policies_v4_${userId || 'default'}`
+  return `ansim_user_enrolled_policies_v5_${userId || 'default'}`
 }
 
 export function getUserLastSyncKey(userId?: string | null): string {
-  return `ansim_user_policies_last_sync_v4_${userId || 'default'}`
+  return `ansim_user_policies_last_sync_v5_${userId || 'default'}`
 }
 
 /**

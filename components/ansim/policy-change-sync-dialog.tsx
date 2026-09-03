@@ -71,7 +71,7 @@ export function PolicyChangeSyncDialog({
   const [editingPolicies, setEditingPolicies] = React.useState<UserEnrolledPolicy[]>(currentPolicies)
 
   // 커스텀 보험 등록 폼 상태
-  const [customInsurer, setCustomInsurer] = React.useState('ANSIM 손해보험')
+  const [customInsurer, setCustomInsurer] = React.useState('삼성화재')
   const [customProductName, setCustomProductName] = React.useState('')
   const [customPremium, setCustomPremium] = React.useState<number>(35000)
   const [customDate, setCustomDate] = React.useState(new Date().toISOString().slice(0, 10))
@@ -131,9 +131,9 @@ export function PolicyChangeSyncDialog({
     const customDoc: InsurancePolicyDocument = {
       id: `custom_policy_${Date.now()}`,
       product_name: customProductName.trim(),
-      product_code: `ANSIM-CUSTOM-${Math.floor(1000 + Math.random() * 9000)}`,
+      product_code: `SFMI-CUSTOM-${Math.floor(1000 + Math.random() * 9000)}`,
       category: customCategory,
-      insurer_name: customInsurer.trim() || 'ANSIM 손해보험',
+      insurer_name: customInsurer.trim() || '삼성화재',
       version: '2026 사용자 맞춤 등록',
       summary: `${customInsurer}의 ${customProductName} 가입 증권입니다.`,
       coverages: [
@@ -169,7 +169,7 @@ export function PolicyChangeSyncDialog({
       contract_id: `contract_custom_${Date.now()}`,
       policy_id: customDoc.id,
       policy_document: customDoc,
-      contract_number: `ANSIM-USR-${Math.floor(1000 + Math.random() * 9000)}`,
+      contract_number: `SFMI-USR-${Math.floor(1000 + Math.random() * 9000)}`,
       insured_name: userName,
       contract_date: customDate || new Date().toISOString().slice(0, 10),
       monthly_premium: customPremium || 30000,
@@ -369,7 +369,7 @@ export function PolicyChangeSyncDialog({
                   연동 지원 보험사 및 기관 (API 연계 완료):
                 </span>
                 <div className="flex flex-wrap gap-2 pt-1">
-                  {['ANSIM 손해보험', 'ANSIM 화재해상', 'ANSIM 생명보험', '삼성화재', 'DB손해보험', '현대해상', 'KB손해보험', '메리츠화재', '신한라이프', '교보생명'].map((name) => (
+                  {['삼성화재', '현대해상', 'DB손해보험', 'KB손해보험', '메리츠화재', '라이나생명', '신한라이프', '교보생명', '한화손해보험', '흥국화재'].map((name) => (
                     <Badge key={name} variant="outline" className="bg-card text-xs py-1 px-2.5 rounded-lg border-border/80">
                       <Building2 className="mr-1 size-3 text-muted-foreground" />
                       {name}

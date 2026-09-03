@@ -2,15 +2,15 @@ import type { InsurancePolicyDocument } from '@/types/policy'
 
 /**
  * 표준 보험약관 데이터셋
- * 실제 금융감독원 표준약관 및 대표 보험사 약관 구조 기반
+ * 실제 금융감독원 표준약관 및 국내 대표 보험사(삼성화재, 현대해상, DB손보 등) 약관 구조 기반
  */
 export const SAMPLE_POLICIES: InsurancePolicyDocument[] = [
   {
     id: 'policy_health_comprehensive',
-    product_name: '안심 3대 질병 종합건강보험 (무배당)',
-    product_code: 'ANSIM-HLTH-2026-01',
+    product_name: '삼성화재 다이렉트 건강보험 마이헬스파트너',
+    product_code: 'SFMI-HLTH-2024-01',
     category: '건강보험',
-    insurer_name: 'ANSIM 손해보험',
+    insurer_name: '삼성화재',
     version: '2026.03 개정판',
     summary: '암, 뇌혈관질환, 허혈성심장질환 등 중대질병 진단비 및 수술/입원비를 폭넓게 보장하는 종합건강보험',
     coverages: [
@@ -181,10 +181,10 @@ export const SAMPLE_POLICIES: InsurancePolicyDocument[] = [
   },
   {
     id: 'policy_indemnity_4th',
-    product_name: '안심 4세대 표준 실손의료보험',
-    product_code: 'ANSIM-INDEM-4TH',
+    product_name: '현대해상 4세대 표준 실손의료보험',
+    product_code: 'HI-INDEM-4TH',
     category: '실손의료보험',
-    insurer_name: 'ANSIM 화재해상',
+    insurer_name: '현대해상',
     version: '4세대 (2021.07 이후)',
     summary: '급여 80% 보장(자기부담 20%), 비급여 70% 보장(자기부담 30% or 3만원 중 큰 금액) 및 3대 비급여 특약 적용',
     coverages: [
@@ -258,12 +258,12 @@ export const SAMPLE_POLICIES: InsurancePolicyDocument[] = [
   },
   {
     id: 'policy_traveler_global',
-    product_name: '안심 글로벌 해외여행자보험 (스마트 플랜)',
-    product_code: 'ANSIM-TRVL-GLOBAL',
+    product_name: 'KB 다이렉트 해외여행보험 (스마트 플랜)',
+    product_code: 'KB-TRVL-GLOBAL',
     category: '여행자보험',
-    insurer_name: 'ANSIM 안심보험',
+    insurer_name: 'KB손해보험',
     version: '2026 해외여행 표준',
-    summary: '해외 질병/상해 치료비, 휴대품 손해, 항공기 지연, 배상책임을 종합 보장하는 여행자 안심 케어',
+    summary: '해외 질병/상해 치료비, 휴대품 손해, 항공기 지연, 배상책임을 종합 보장하는 KB 다이렉트 여행자 케어',
     coverages: [
       {
         id: 'cov_travel_overseas_medical',
@@ -335,10 +335,10 @@ export const SAMPLE_POLICIES: InsurancePolicyDocument[] = [
   },
   {
     id: 'policy_driver_protection',
-    product_name: '안심 프리미엄 운전자 비용보장보험',
-    product_code: 'ANSIM-DRV-2026-05',
+    product_name: 'DB손해보험 참좋은 운전자상해보험',
+    product_code: 'DB-DRV-2024-05',
     category: '운전자보험',
-    insurer_name: 'ANSIM 화재해상',
+    insurer_name: 'DB손해보험',
     version: '2026.01 최신판',
     summary: '교통사고처리지원금(형사합의금), 변호사선임비용, 자동차사고벌금, 자동차사고부상치료비(자부상) 종합 보장',
     coverages: [
@@ -410,10 +410,10 @@ export const SAMPLE_POLICIES: InsurancePolicyDocument[] = [
   },
   {
     id: 'policy_brain_cardio_intensive',
-    product_name: '안심 뇌·심장 집중케어보험 (특약강화형)',
-    product_code: 'ANSIM-CRD-2026-08',
+    product_name: '메리츠화재 듬직한 뇌·심장 집중보장보험 (특약형)',
+    product_code: 'MERITZ-CRD-2024-08',
     category: '건강보험',
-    insurer_name: 'ANSIM 손해보험',
+    insurer_name: '메리츠화재',
     version: '2026.04 개정판',
     summary: '급성심근경색증 진단비, 허혈성심장질환 수술비, 혈전용해치료비 등 2대 중증질환 집중 보장',
     coverages: [
@@ -485,10 +485,10 @@ export const SAMPLE_POLICIES: InsurancePolicyDocument[] = [
   },
   {
     id: 'policy_dental_care',
-    product_name: '안심 든든 치아케어보험',
-    product_code: 'ANSIM-DENT-2026-02',
+    product_name: '라이나생명 (무)THE건강한치아보험',
+    product_code: 'LINA-DENT-2024-02',
     category: '치아보험',
-    insurer_name: 'ANSIM 생명보험',
+    insurer_name: '라이나생명',
     version: '2026.02 개정판',
     summary: '임플란트, 브릿지, 크라운, 충치치료(레진/인레이) 등 치과 진료비 집중 보장',
     coverages: [

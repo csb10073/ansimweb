@@ -51,6 +51,8 @@ import {
   SavedSimulationComparator,
   type SavedSimulationItem,
   getSavedSimulationsStorageKey,
+  isSameSimulationCondition,
+  generateSimulationTitle,
 } from './saved-simulation-comparator'
 import { cn } from '@/lib/utils'
 
@@ -219,7 +221,7 @@ export function SimulationWorkspace({ isModal = false }: SimulationWorkspaceProp
       try {
         const storageKey = getSavedSimulationsStorageKey(user?.id)
         let list: SavedSimulationItem[] = []
-        const seenTitles = new Set<string>()
+        const seenIds = new Set<string>()
 
         const stored = localStorage.getItem(storageKey)
         if (stored) {
@@ -227,9 +229,8 @@ export function SimulationWorkspace({ isModal = false }: SimulationWorkspaceProp
             const parsed = JSON.parse(stored) as SavedSimulationItem[]
             if (Array.isArray(parsed)) {
               parsed.forEach((item) => {
-                const keyTitle = item.title || item.input?.incident_name
-                if (item && item.id && !seenTitles.has(keyTitle)) {
-                  seenTitles.add(keyTitle)
+                if (item && item.id && !seenIds.has(item.id)) {
+                  seenIds.add(item.id)
                   list.push(item)
                 }
               })
@@ -237,37 +238,7 @@ export function SimulationWorkspace({ isModal = false }: SimulationWorkspaceProp
           } catch {}
         }
 
-        // 다른 키 스캔 및 병합
-        if (typeof window !== 'undefined' && window.localStorage) {
-          for (let i = 0; i < localStorage.length; i++) {
-            const k = localStorage.key(i)
-            if (
-              k &&
-              k !== storageKey &&
-              (k.startsWith('ansim_user_saved_simulations') ||
-                k.startsWith('ansim_saved_simulations') ||
-                k.includes('saved_simulations'))
-            ) {
-              try {
-                const val = localStorage.getItem(k)
-                if (val) {
-                  const parsed = JSON.parse(val) as SavedSimulationItem[]
-                  if (Array.isArray(parsed)) {
-                    parsed.forEach((item) => {
-                      const keyTitle = item.title || item.input?.incident_name
-                      if (item && item.id && !seenTitles.has(keyTitle)) {
-                        seenTitles.add(keyTitle)
-                        list.push(item)
-                      }
-                    })
-                  }
-                }
-              } catch {}
-            }
-          }
-        }
-
-        const title = `${input.incident_name} (${(rep.total_estimated_payout / 10000).toLocaleString('ko-KR')}만원)`
+        const title = generateSimulationTitle(input, rep)
         const newItem: SavedSimulationItem = {
           id: `saved_${Date.now()}`,
           title,
@@ -281,8 +252,10 @@ export function SimulationWorkspace({ isModal = false }: SimulationWorkspaceProp
           report: rep,
           selectedContractIds: contractIds,
         }
-        // 최근 동일한 이름의 시뮬레이션이 있다면 최신으로 갱신
-        const filtered = list.filter((item) => item.input.incident_name !== input.incident_name)
+        // 완전히 동일한 조건/결과인 경우에만 중복 갱신하고, 조건을 수정한 새 시뮬레이션은 이전 결과를 보존한 채 추가
+        const filtered = list.filter(
+          (item) => !isSameSimulationCondition(item, input, rep, contractIds),
+        )
         const updated = [newItem, ...filtered].slice(0, 30)
         localStorage.setItem(storageKey, JSON.stringify(updated))
         if (showToast) {

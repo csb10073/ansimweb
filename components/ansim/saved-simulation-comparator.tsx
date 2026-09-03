@@ -66,10 +66,54 @@ export interface SavedSimulationItem {
 }
 
 export function getSavedSimulationsStorageKey(userId?: string | null): string {
-  return `ansim_user_saved_simulations_v4_${userId || 'default'}`
+  return `ansim_user_saved_simulations_v5_${userId || 'default'}`
 }
 
-export const SAVED_SIMULATIONS_STORAGE_KEY = 'ansim_user_saved_simulations_v4'
+export const SAVED_SIMULATIONS_STORAGE_KEY = 'ansim_user_saved_simulations_v5'
+
+/**
+ * 시뮬레이션의 조건(입원일수, 수술, 청구금액, 선택계약 등)이 완전히 동일한지 확인
+ */
+export function isSameSimulationCondition(
+  item: SavedSimulationItem,
+  input: UserSituationInput,
+  rep: MultiPolicySimulationReport,
+  contractIds: string[],
+): boolean {
+  if (!item?.input || !item?.report) return false
+
+  const sameName = item.input.incident_name === input.incident_name
+  const sameClaimed = item.input.claimed_amount === input.claimed_amount
+  const sameHospital = (item.input.hospitalization_days || 0) === (input.hospitalization_days || 0)
+  const sameSurgery = (item.input.surgery_count || 0) === (input.surgery_count || 0)
+  const sameType = item.input.incident_type === input.incident_type
+  const samePayout = item.report.total_estimated_payout === rep.total_estimated_payout
+
+  const flags1 = (item.input.special_circumstances || []).slice().sort().join(',')
+  const flags2 = (input.special_circumstances || []).slice().sort().join(',')
+  const sameFlags = flags1 === flags2
+
+  const contracts1 = (item.selectedContractIds || []).slice().sort().join(',')
+  const contracts2 = (contractIds || []).slice().sort().join(',')
+  const sameContracts = contracts1 === contracts2
+
+  return sameName && sameClaimed && sameHospital && sameSurgery && sameType && samePayout && sameFlags && sameContracts
+}
+
+/**
+ * 시뮬레이션의 변경된 조건(입원, 수술 등)을 반영한 제목 생성
+ */
+export function generateSimulationTitle(input: UserSituationInput, rep: MultiPolicySimulationReport): string {
+  const conditionTags: string[] = []
+  if (input.hospitalization_days && input.hospitalization_days > 0) {
+    conditionTags.push(`입원 ${input.hospitalization_days}일`)
+  }
+  if (input.surgery_count && input.surgery_count > 0) {
+    conditionTags.push(`수술 ${input.surgery_count}회`)
+  }
+  const conditionStr = conditionTags.length > 0 ? ` [${conditionTags.join(', ')}]` : ''
+  return `${input.incident_name}${conditionStr} (${(rep.total_estimated_payout / 10000).toLocaleString('ko-KR')}만원)`
+}
 
 /**
  * ⚡ 심사위원 평가용 3대 대표 시나리오 기본 생성 헬퍼
@@ -162,22 +206,21 @@ export function SavedSimulationComparator({
 
   const storageKey = getSavedSimulationsStorageKey(user?.id)
 
-  // 로컬스토리지에서 사용자 저장 목록 불러오기
+  // 로컬스토리지에서 사용자 저장 목록 불러오기 (사용자가 직접 저장한 항목만 순수하게 로드)
   const loadSavedSimulations = React.useCallback(() => {
     try {
       let aggregated: SavedSimulationItem[] = []
-      const seenTitles = new Set<string>()
+      const seenIds = new Set<string>()
 
-      // 1) 현재 타겟 키 확인
+      // 1) 현재 타겟 키 확인 (사용자가 직접 저장/관리하는 목록만 정확히 조회)
       const currentStored = localStorage.getItem(storageKey)
       if (currentStored) {
         try {
           const parsed = JSON.parse(currentStored) as SavedSimulationItem[]
           if (Array.isArray(parsed)) {
             parsed.forEach((item) => {
-              const keyTitle = item.title || item.input?.incident_name
-              if (item && item.id && !seenTitles.has(keyTitle)) {
-                seenTitles.add(keyTitle)
+              if (item && item.id && !seenIds.has(item.id)) {
+                seenIds.add(item.id)
                 aggregated.push(item)
               }
             })
@@ -185,51 +228,11 @@ export function SavedSimulationComparator({
         } catch {}
       }
 
-      // 2) 다른 버전/키 전체 스캔 및 병합
-      if (typeof window !== 'undefined' && window.localStorage) {
-        for (let i = 0; i < localStorage.length; i++) {
-          const key = localStorage.key(i)
-          if (
-            key &&
-            key !== storageKey &&
-            (key.startsWith('ansim_user_saved_simulations') ||
-              key.startsWith('ansim_saved_simulations') ||
-              key.includes('saved_simulations'))
-          ) {
-            try {
-              const val = localStorage.getItem(key)
-              if (val) {
-                const parsed = JSON.parse(val) as SavedSimulationItem[]
-                if (Array.isArray(parsed)) {
-                  parsed.forEach((item) => {
-                    const keyTitle = item.title || item.input?.incident_name
-                    if (item && item.id && !seenTitles.has(keyTitle)) {
-                      seenTitles.add(keyTitle)
-                      aggregated.push(item)
-                    }
-                  })
-                }
-              }
-            } catch {}
-          }
-        }
-      }
-
-      // 3) 만약 보관함이 비어있다면, 3대 표준 시나리오로 자동 복원
-      if (aggregated.length === 0) {
-        const policyList = userPolicies.length > 0 ? userPolicies : getDefaultPoliciesForUser(user)
-        aggregated = generateDefaultSavedSamples(policyList)
-        try {
-          localStorage.setItem(storageKey, JSON.stringify(aggregated))
-        } catch {}
-      }
-
       setSavedList(aggregated)
     } catch {
-      const fallback = generateDefaultSavedSamples(userPolicies)
-      setSavedList(fallback)
+      setSavedList([])
     }
-  }, [storageKey, user, userPolicies])
+  }, [storageKey])
 
   React.useEffect(() => {
     if (open) {
@@ -253,9 +256,10 @@ export function SavedSimulationComparator({
       return
     }
 
+    const title = generateSimulationTitle(currentInput, currentReport)
     const newItem: SavedSimulationItem = {
       id: `saved_${Date.now()}`,
-      title: `${currentInput.incident_name} (${(currentReport.total_estimated_payout / 10000).toLocaleString('ko-KR')}만원)`,
+      title,
       savedAt: new Date().toLocaleDateString('ko-KR', {
         month: '2-digit',
         day: '2-digit',
@@ -267,7 +271,11 @@ export function SavedSimulationComparator({
       selectedContractIds,
     }
 
-    const updated = [newItem, ...savedList.filter((item) => item.title !== newItem.title)].slice(0, 30)
+    // 완전히 동일한 조건/결과인 경우에만 기존 항목 대체, 조건을 수정한 시뮬레이션은 이전 결과 그대로 보존
+    const filtered = savedList.filter(
+      (item) => !isSameSimulationCondition(item, currentInput, currentReport, selectedContractIds),
+    )
+    const updated = [newItem, ...filtered].slice(0, 30)
     updateSavedList(updated)
     toast.success(`'${newItem.title}' 시뮬레이션이 보관함에 저장되었습니다!`)
   }
@@ -283,9 +291,31 @@ export function SavedSimulationComparator({
     toast.info('시뮬레이션이 보관함에서 삭제되었습니다.')
   }
 
-  // 전체 비우기
+  // 전체 비우기 (현재 키 및 과거 잔여 레거시 키까지 모두 삭제)
   const handleClearAll = () => {
     if (confirm('저장된 모든 시뮬레이션 기록을 비우시겠습니까?')) {
+      try {
+        localStorage.removeItem(storageKey)
+      } catch {}
+
+      if (typeof window !== 'undefined' && window.localStorage) {
+        try {
+          const keysToRemove: string[] = []
+          for (let i = 0; i < localStorage.length; i++) {
+            const k = localStorage.key(i)
+            if (
+              k &&
+              (k.startsWith('ansim_user_saved_simulations') ||
+                k.startsWith('ansim_saved_simulations') ||
+                k.includes('saved_simulations'))
+            ) {
+              keysToRemove.push(k)
+            }
+          }
+          keysToRemove.forEach((k) => localStorage.removeItem(k))
+        } catch {}
+      }
+
       updateSavedList([])
       setInspectingItem(null)
       toast.info('보관함의 모든 시뮬레이션이 삭제되었습니다.')

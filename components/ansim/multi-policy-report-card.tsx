@@ -57,6 +57,11 @@ export function MultiPolicyReportCard({
   const [openPolicyTab, setOpenPolicyTab] = React.useState<string | null>(
     report.policy_results[0]?.contract_id ?? null,
   )
+  const [isSaved, setIsSaved] = React.useState(false)
+
+  React.useEffect(() => {
+    setIsSaved(false)
+  }, [report])
 
   const handleCopyReport = async () => {
     const lines = [
@@ -408,11 +413,28 @@ export function MultiPolicyReportCard({
           {onSaveSimulation && (
             <Button
               variant="outline"
-              onClick={onSaveSimulation}
-              className="rounded-full text-xs border-coral/40 text-coral bg-coral/5 hover:bg-coral/15 font-bold h-11 px-5 shadow-xs"
+              onClick={() => {
+                onSaveSimulation()
+                setIsSaved(true)
+              }}
+              className={cn(
+                'rounded-full text-xs font-bold h-11 px-5 shadow-xs transition-all',
+                isSaved
+                  ? 'border-mint/50 text-mint-foreground bg-mint/15 hover:bg-mint/20'
+                  : 'border-coral/40 text-coral bg-coral/5 hover:bg-coral/15',
+              )}
             >
-              <Sparkles className="mr-1.5 size-3.5 text-coral" />
-              현재 결과 보관함에 저장
+              {isSaved ? (
+                <>
+                  <CheckCircle2 className="mr-1.5 size-3.5 text-mint-foreground" />
+                  보관함에 저장 완료됨
+                </>
+              ) : (
+                <>
+                  <Sparkles className="mr-1.5 size-3.5 text-coral" />
+                  현재 결과 보관함에 저장
+                </>
+              )}
             </Button>
           )}
           <Button
