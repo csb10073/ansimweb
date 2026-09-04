@@ -134,6 +134,24 @@ const PRESET_CATEGORY_TABS = [
   { id: 'exclusion', label: '🛡️ 면책검증' },
 ] as const
 
+const INCIDENT_TYPE_ITEMS: { value: UserSituationInput['incident_type']; label: string }[] = [
+  { value: 'diagnosis', label: '질병 진단' },
+  { value: 'hospitalization', label: '입원 치료' },
+  { value: 'surgery', label: '수술 치료' },
+  { value: 'outpatient', label: '통원 / 외래 (도수치료 등)' },
+  { value: 'loss', label: '휴대품 손해 / 도난' },
+  { value: 'other', label: '기타 사고' },
+]
+
+const INCIDENT_TYPE_LABELS: Record<string, string> = {
+  diagnosis: '질병 진단',
+  hospitalization: '입원 치료',
+  surgery: '수술 치료',
+  outpatient: '통원 / 외래 (도수치료 등)',
+  loss: '휴대품 손해 / 도난',
+  other: '기타 사고',
+}
+
 export function SimulationWorkspace({ isModal = false }: SimulationWorkspaceProps) {
   // 스텝 관리: 1: 가입보험 조회, 2: 상황입력, 3: 결과리포트
   const [currentStep, setCurrentStep] = React.useState<1 | 2 | 3>(1)
@@ -876,21 +894,25 @@ export function SimulationWorkspace({ isModal = false }: SimulationWorkspaceProp
                   치료 / 사고 유형
                 </Label>
                 <Select
+                  items={INCIDENT_TYPE_ITEMS}
                   value={incidentType}
                   onValueChange={(val) =>
                     setIncidentType(val as UserSituationInput['incident_type'])
                   }
                 >
                   <SelectTrigger id="inc-type" className="rounded-2xl bg-background text-xs h-10">
-                    <SelectValue />
+                    <SelectValue>
+                      {(val: UserSituationInput['incident_type'] | null) =>
+                        val ? INCIDENT_TYPE_LABELS[val] || val : '치료 / 사고 유형 선택'
+                      }
+                    </SelectValue>
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="diagnosis">질병 진단</SelectItem>
-                    <SelectItem value="hospitalization">입원 치료</SelectItem>
-                    <SelectItem value="surgery">수술 치료</SelectItem>
-                    <SelectItem value="outpatient">통원 / 외래 (도수치료 등)</SelectItem>
-                    <SelectItem value="loss">휴대품 손해 / 도난</SelectItem>
-                    <SelectItem value="other">기타 사고</SelectItem>
+                    {INCIDENT_TYPE_ITEMS.map((item) => (
+                      <SelectItem key={item.value} value={item.value}>
+                        {item.label}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>

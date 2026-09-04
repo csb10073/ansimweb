@@ -611,8 +611,8 @@ export function SavedSimulationComparator({
                               ⚖️ <strong>판단 사유:</strong> {judgment.decision_reason}
                             </p>
 
-                            {/* 약관 근거 뷰어 연동 */}
-                            {judgment.evidences && judgment.evidences.length > 0 && (
+                            {/* 약관 근거 뷰어 연동: 해당 보험에 보장 금액이 발생한 경우에만 표시 */}
+                            {policyRes.total_payout_for_policy > 0 && judgment.evidences && judgment.evidences.length > 0 && (
                               <PolicyEvidenceViewer
                                 evidences={judgment.evidences}
                                 coverageName={judgment.coverage_name}

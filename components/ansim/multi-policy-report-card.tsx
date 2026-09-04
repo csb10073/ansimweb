@@ -301,7 +301,7 @@ export function MultiPolicyReportCard({
                     </span>
                   </div>
 
-                  {doc && (
+                  {doc && policyRes.total_payout_for_policy > 0 && (
                     <Button
                       variant="outline"
                       size="sm"
@@ -366,8 +366,8 @@ export function MultiPolicyReportCard({
                               ⚖️ <strong>판단 사유:</strong> {item.decision_reason}
                             </p>
 
-                            {/* Evidence 확인 컴포넌트 */}
-                            {item.evidences.length > 0 && (
+                            {/* Evidence 확인 컴포넌트: 해당 보험에 보장 금액이 발생한 경우에만 표시 */}
+                            {policyRes.total_payout_for_policy > 0 && item.evidences.length > 0 && (
                               <PolicyEvidenceViewer
                                 evidences={item.evidences}
                                 coverageName={item.coverage_name}

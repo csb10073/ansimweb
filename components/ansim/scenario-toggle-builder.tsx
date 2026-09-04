@@ -577,10 +577,6 @@ export function ScenarioToggleBuilder({
         clauses.push(`추가로 [${extras}] 치료/검사를 진행하고`)
       }
 
-      if (costAmount !== null) {
-        clauses.push(`(예상 의료비/손해액 약 ${costAmount.toLocaleString('ko-KR')}원 가정),`)
-      }
-
       situation = `만약 제가 ${clauses.join(' ')} 현재 가입된 보험에서 진단비, 수술비, 입원일당, 실손의료비로 총 얼마를 보장받을 수 있는지 시뮬레이션해주세요.`
     } else {
       const clauses: string[] = []
@@ -610,10 +606,6 @@ export function ScenarioToggleBuilder({
 
       if (extras) {
         clauses.push(`치료 과정 중 [${extras}] 항목이 포함되었으며,`)
-      }
-
-      if (costAmount !== null) {
-        clauses.push(`총 발생한 치료비/손해액은 약 ${costAmount.toLocaleString('ko-KR')}원입니다.`)
       }
 
       clauses.push(`가입된 보험을 통해 청구 가능한 예상 보험금과 필요 제출 서류를 안내해주세요.`)
@@ -1056,13 +1048,6 @@ export function ScenarioToggleBuilder({
           <span>•</span>
           <span>
             수술: <strong className="text-foreground">{customSurgeryCount !== null ? (customSurgeryCount === 0 ? '수술 없음' : `${customSurgeryCount}회`) : '미선택'}</strong>
-          </span>
-          <span>•</span>
-          <span>
-            예상 치료비:{' '}
-            <strong className="text-coral">
-              {costAmount !== null ? `${costAmount.toLocaleString('ko-KR')}원` : `${generatedResult.claimedAmount.toLocaleString('ko-KR')}원`}
-            </strong>
           </span>
         </div>
       </div>
