@@ -66,10 +66,10 @@ export interface SavedSimulationItem {
 }
 
 export function getSavedSimulationsStorageKey(userId?: string | null): string {
-  return `ansim_user_saved_simulations_v5_${userId || 'default'}`
+  return `ansim_user_saved_simulations_v6_${userId || 'default'}`
 }
 
-export const SAVED_SIMULATIONS_STORAGE_KEY = 'ansim_user_saved_simulations_v5'
+export const SAVED_SIMULATIONS_STORAGE_KEY = 'ansim_user_saved_simulations_v6'
 
 /**
  * 시뮬레이션의 조건(입원일수, 수술, 청구금액, 선택계약 등)이 완전히 동일한지 확인
@@ -206,13 +206,13 @@ export function SavedSimulationComparator({
 
   const storageKey = getSavedSimulationsStorageKey(user?.id)
 
-  // 로컬스토리지에서 사용자 저장 목록 불러오기 (사용자가 직접 저장한 항목만 순수하게 로드)
+  // 로컬스토리지에서 사용자 저장 목록 불러오기 (최초 진입 시 심사위원 검증용 3대 시나리오 기본 탑재)
   const loadSavedSimulations = React.useCallback(() => {
     try {
       let aggregated: SavedSimulationItem[] = []
       const seenIds = new Set<string>()
 
-      // 1) 현재 타겟 키 확인 (사용자가 직접 저장/관리하는 목록만 정확히 조회)
+      // 1) 현재 타겟 키 확인 (사용자가 직접 저장/관리하는 목록 조회)
       const currentStored = localStorage.getItem(storageKey)
       if (currentStored) {
         try {
@@ -228,11 +228,20 @@ export function SavedSimulationComparator({
         } catch {}
       }
 
+      // 2) 최초 접속이거나 저장 목록이 비어있는 경우, 심사위원 평가용 3대 대표 시나리오를 기본값으로 자동 로드
+      if (aggregated.length === 0) {
+        const policyList = userPolicies.length > 0 ? userPolicies : getDefaultPoliciesForUser(user)
+        aggregated = generateDefaultSavedSamples(policyList)
+        try {
+          localStorage.setItem(storageKey, JSON.stringify(aggregated))
+        } catch {}
+      }
+
       setSavedList(aggregated)
     } catch {
       setSavedList([])
     }
-  }, [storageKey])
+  }, [storageKey, userPolicies, user])
 
   React.useEffect(() => {
     if (open) {

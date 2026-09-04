@@ -2,7 +2,7 @@ import type { UserEnrolledPolicy } from '@/types/policy'
 import { SAMPLE_POLICIES } from './policies/sample-policies'
 
 /**
- * 홍길동 계정 전용 보유 보험 증권 목록 (총 3건: 암/종합건강 + 실손 + 여행자)
+ * 홍길동 계정 전용 보유 보험 증권 목록 (총 4건: 암/종합건강 + 실손 + 여행자 + 운전자)
  */
 export const HONG_USER_POLICIES: UserEnrolledPolicy[] = [
   {
@@ -37,6 +37,17 @@ export const HONG_USER_POLICIES: UserEnrolledPolicy[] = [
     monthly_premium: 18_000,
     status: 'ACTIVE',
     tag_color: 'navy',
+  },
+  {
+    contract_id: 'contract_drv_004',
+    policy_id: 'policy_driver_protection',
+    policy_document: SAMPLE_POLICIES[3], // DB손해보험 참좋은 운전자상해보험
+    contract_number: 'DB-2026-DRV-1109',
+    insured_name: '홍길동',
+    contract_date: '2026-02-15',
+    monthly_premium: 19_800,
+    status: 'ACTIVE',
+    tag_color: 'yellow',
   },
 ]
 
@@ -93,17 +104,6 @@ export function getDefaultPoliciesForUser(
  */
 export const CANDIDATE_EXTRA_POLICIES: UserEnrolledPolicy[] = [
   {
-    contract_id: 'contract_drv_004',
-    policy_id: 'policy_driver_protection',
-    policy_document: SAMPLE_POLICIES[3], // DB손해보험 참좋은 운전자상해보험
-    contract_number: 'DB-2026-DRV-1109',
-    insured_name: '홍길동',
-    contract_date: '2026-02-15',
-    monthly_premium: 19_800,
-    status: 'ACTIVE',
-    tag_color: 'yellow',
-  },
-  {
     contract_id: 'contract_crd_005',
     policy_id: 'policy_brain_cardio_intensive',
     policy_document: SAMPLE_POLICIES[4], // 메리츠화재 듬직한 뇌·심장 집중보장보험
@@ -130,11 +130,11 @@ export const CANDIDATE_EXTRA_POLICIES: UserEnrolledPolicy[] = [
 export const USER_POLICIES_CHANGE_EVENT = 'ansim:user-policies-changed'
 
 export function getUserStorageKey(userId?: string | null): string {
-  return `ansim_user_enrolled_policies_v5_${userId || 'default'}`
+  return `ansim_user_enrolled_policies_v6_${userId || 'default'}`
 }
 
 export function getUserLastSyncKey(userId?: string | null): string {
-  return `ansim_user_policies_last_sync_v5_${userId || 'default'}`
+  return `ansim_user_policies_last_sync_v6_${userId || 'default'}`
 }
 
 /**
